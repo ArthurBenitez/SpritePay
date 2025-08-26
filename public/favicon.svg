@@ -1,0 +1,42 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="palmGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16a34a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#15803d;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="#1f2937" stroke="url(#goldGradient)" stroke-width="3"/>
+  
+  <!-- Roman wheat wreath - left side -->
+  <path d="M15 35 Q20 30 25 35 Q20 40 15 35 M18 40 Q23 35 28 40 Q23 45 18 40 M21 45 Q26 40 31 45 Q26 50 21 45 M24 50 Q29 45 34 50 Q29 55 24 50 M27 55 Q32 50 37 55 Q32 60 27 55" fill="url(#goldGradient)" stroke="#b45309" stroke-width="1"/>
+  
+  <!-- Roman wheat wreath - right side -->
+  <path d="M85 35 Q80 30 75 35 Q80 40 85 35 M82 40 Q77 35 72 40 Q77 45 82 40 M79 45 Q74 40 69 45 Q74 50 79 45 M76 50 Q71 45 66 50 Q71 55 76 50 M73 55 Q68 50 63 55 Q68 60 73 55" fill="url(#goldGradient)" stroke="#b45309" stroke-width="1"/>
+  
+  <!-- Roman wheat wreath - top -->
+  <path d="M35 15 Q40 10 45 15 Q40 20 35 15 M45 15 Q50 10 55 15 Q50 20 45 15 M55 15 Q60 10 65 15 Q60 20 55 15" fill="url(#goldGradient)" stroke="#b45309" stroke-width="1"/>
+  
+  <!-- Roman wheat wreath - bottom -->
+  <path d="M35 85 Q40 80 45 85 Q40 90 35 85 M45 85 Q50 80 55 85 Q50 90 45 85 M55 85 Q60 80 65 85 Q60 90 55 85" fill="url(#goldGradient)" stroke="#b45309" stroke-width="1"/>
+  
+  <!-- Palm tree trunk -->
+  <rect x="47" y="55" width="6" height="25" fill="#8b4513" stroke="#654321" stroke-width="1"/>
+  
+  <!-- Palm fronds -->
+  <path d="M50 55 Q35 40 30 35 Q40 45 50 55" fill="url(#palmGradient)" stroke="#15803d" stroke-width="2"/>
+  <path d="M50 55 Q65 40 70 35 Q60 45 50 55" fill="url(#palmGradient)" stroke="#15803d" stroke-width="2"/>
+  <path d="M50 55 Q40 30 35 25 Q45 35 50 55" fill="url(#palmGradient)" stroke="#15803d" stroke-width="2"/>
+  <path d="M50 55 Q60 30 65 25 Q55 35 50 55" fill="url(#palmGradient)" stroke="#15803d" stroke-width="2"/>
+  <path d="M50 55 Q45 25 50 20 Q55 25 50 55" fill="url(#palmGradient)" stroke="#15803d" stroke-width="2"/>
+  
+  <!-- Coconuts -->
+  <circle cx="48" cy="58" r="2" fill="#8b4513"/>
+  <circle cx="52" cy="58" r="2" fill="#8b4513"/>
+</svg>

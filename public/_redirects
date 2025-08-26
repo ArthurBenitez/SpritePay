@@ -1,0 +1,10 @@
+# SPA Configuration for Lovable
+# All routes should be handled by React Router
+/*    /index.html   200
+
+# Specific routes for better SEO
+/success    /index.html   200
+/reset-password    /index.html   200
+
+# Handle referral links with query parameters
+/?ref=*    /index.html   200
