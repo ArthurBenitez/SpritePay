@@ -301,6 +301,57 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_eligibility: {
+        Row: {
+          block_number: number | null
+          block_position: number | null
+          created_at: string
+          credits_amount: number | null
+          credits_granted: boolean
+          device_fingerprint: string
+          eligible_user_position: number | null
+          evaluation_reason: string | null
+          id: string
+          ip_address: unknown
+          is_eligible: boolean
+          risk_score: number | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          block_number?: number | null
+          block_position?: number | null
+          created_at?: string
+          credits_amount?: number | null
+          credits_granted?: boolean
+          device_fingerprint: string
+          eligible_user_position?: number | null
+          evaluation_reason?: string | null
+          id?: string
+          ip_address: unknown
+          is_eligible?: boolean
+          risk_score?: number | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          block_number?: number | null
+          block_position?: number | null
+          created_at?: string
+          credits_amount?: number | null
+          credits_granted?: boolean
+          device_fingerprint?: string
+          eligible_user_position?: number | null
+          evaluation_reason?: string | null
+          id?: string
+          ip_address?: unknown
+          is_eligible?: boolean
+          risk_score?: number | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       sprites: {
         Row: {
           created_at: string | null
@@ -484,6 +535,15 @@ export type Database = {
           p_ip_address: unknown
           p_localstorage_hash?: string
           p_user_agent?: string
+        }
+        Returns: Json
+      }
+      evaluate_initial_credits: {
+        Args: {
+          p_device_fingerprint: string
+          p_ip_address: unknown
+          p_user_agent?: string
+          p_user_id: string
         }
         Returns: Json
       }

@@ -81,6 +81,11 @@ export const useTutorial = () => {
         .eq('user_id', user.id);
       
       window.dispatchEvent(new CustomEvent('profile-update'));
+      
+      // Trigger credit evaluation after tutorial completion
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('evaluate-initial-credits'));
+      }, 1000);
     }
     
     setIsActive(false);
