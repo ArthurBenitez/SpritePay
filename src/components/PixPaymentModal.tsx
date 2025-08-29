@@ -250,6 +250,18 @@ export const PixPaymentModal = ({ isOpen, onClose, credits }: PixPaymentModalPro
                     onChange={(e) => handleInputChange('phone', e.target.value)}
                     className="border-primary/20 focus:border-primary"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    💡 Caso não tenha telefone, utilize o número (48) 98630-5384
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleInputChange('phone', '(48) 98630-5384')}
+                    className="w-full text-xs"
+                  >
+                    🚀 Preencher telefone de teste
+                  </Button>
                 </div>
 
                 <div className="space-y-2">
@@ -262,6 +274,35 @@ export const PixPaymentModal = ({ isOpen, onClose, credits }: PixPaymentModalPro
                     onChange={(e) => handleInputChange('cpf', e.target.value)}
                     className="border-primary/20 focus:border-primary"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    💡 Caso não tenha CPF, utilize o CPF 348.678.730-63
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleInputChange('cpf', '348.678.730-63')}
+                    className="w-full text-xs"
+                  >
+                    🚀 Preencher CPF de teste
+                  </Button>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => {
+                      handleInputChange('name', 'Usuário Teste');
+                      handleInputChange('email', 'teste@spritepay.com');
+                      handleInputChange('phone', '(48) 98630-5384');
+                      handleInputChange('cpf', '348.678.730-63');
+                    }}
+                    className="w-full text-xs"
+                  >
+                    🎯 Preencher todos os campos de teste
+                  </Button>
                 </div>
 
                 <Button 
