@@ -113,6 +113,24 @@ export type Database = {
         }
         Relationships: []
       }
+      bd_ativo: {
+        Row: {
+          created_at: string
+          id: number
+          number: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          number?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          number?: number | null
+        }
+        Relationships: []
+      }
       device_sessions: {
         Row: {
           created_at: string | null
