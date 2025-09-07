@@ -17,12 +17,16 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [isLogin, setIsLogin] = useState(false);
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
-  const { user, signUp, signIn, signInWithGoogle } = useAuth();
+  const { user, signUp, signIn, signInWithGoogle, checkUsernameAvailable } = useAuth();
   const { toast } = useToast();
   
   // Extract referral code from URL
@@ -35,6 +39,16 @@ const Signup = () => {
       navigate('/', { replace: true });
     }
   }, [user, navigate]);
+
+  const checkUsername = async (usernameValue: string) => {
+    if (usernameValue.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+    
+    const available = await checkUsernameAvailable(usernameValue);
+    setUsernameAvailable(available);
+  };
 
   const handleSignUp = async () => {
     // Basic validation before attempting signup
@@ -66,6 +80,33 @@ const Signup = () => {
       });
       return;
     }
+
+    if (!username.trim()) {
+      toast({
+        title: "❌ Erro",
+        description: "Por favor, escolha um nome de usuário.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (username.length < 3) {
+      toast({
+        title: "❌ Erro",
+        description: "O nome de usuário deve ter pelo menos 3 caracteres.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (usernameAvailable === false) {
+      toast({
+        title: "❌ Erro",
+        description: "Este nome de usuário já está em uso.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     if (password.length < 6) {
       toast({
@@ -76,7 +117,32 @@ const Signup = () => {
       return;
     }
     
-    const result = await signUp(email, password, name, referralCode || undefined);
+    const result = await signUp(email, password, name, username, referralCode || undefined);
+    if (!result.error) {
+      navigate('/');
+    }
+  };
+
+  const handleSignIn = async () => {
+    if (!emailOrUsername.trim()) {
+      toast({
+        title: "❌ Erro",
+        description: "Por favor, insira seu email ou nome de usuário.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "❌ Erro",
+        description: "A senha deve ter pelo menos 6 caracteres.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const result = await signIn(emailOrUsername, password);
     if (!result.error) {
       navigate('/');
     }
@@ -90,10 +156,15 @@ const Signup = () => {
     await signInWithGoogle();
   };
 
-  const goToLogin = () => {
-    // Preserve referral code when going to login
-    const loginUrl = referralCode && isValidReferral ? `/?ref=${referralCode}` : '/';
-    navigate(loginUrl);
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    // Clear form fields when switching modes
+    setEmail("");
+    setEmailOrUsername("");
+    setPassword("");
+    setName("");
+    setUsername("");
+    setUsernameAvailable(null);
   };
 
   return (
@@ -106,7 +177,9 @@ const Signup = () => {
             <img src={logoMark} alt="SpritePay Logo" className="inline-block w-8 h-8 mr-2" />
             SpritePay
           </CardTitle>
-          <p className="text-muted-foreground">Compre, invista, indique, lucre</p>
+          <p className="text-muted-foreground">
+            {isLogin ? 'Entre em sua conta' : 'Compre, invista, indique, lucre'}
+          </p>
           
           {/* Referral invitation banner */}
           {referralCode && isValidReferral && (
@@ -121,68 +194,145 @@ const Signup = () => {
         </CardHeader>
         
         <CardContent className="space-y-4">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome completo</Label>
-              <Input
-                id="name"
-                placeholder="Seu nome completo"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border-primary/20 focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border-primary/20 focus:border-primary"
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
+          {!isLogin ? (
+            // Signup Form
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome completo</Label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Crie uma senha segura"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="border-primary/20 focus:border-primary pr-10"
+                  id="name"
+                  placeholder="Seu nome completo"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="border-primary/20 focus:border-primary"
                   required
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </Button>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border-primary/20 focus:border-primary"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="username">Nome de usuário</Label>
+                <Input
+                  id="username"
+                  placeholder="Escolha um nome único"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    checkUsername(e.target.value);
+                  }}
+                  className={`border-primary/20 focus:border-primary ${
+                    usernameAvailable === false ? 'border-red-500' : 
+                    usernameAvailable === true ? 'border-green-500' : ''
+                  }`}
+                  required
+                />
+                {username.length >= 3 && (
+                  <p className={`text-sm ${
+                    usernameAvailable === false ? 'text-red-500' : 
+                    usernameAvailable === true ? 'text-green-500' : 'text-muted-foreground'
+                  }`}>
+                    {usernameAvailable === false ? '❌ Nome de usuário já está em uso' : 
+                     usernameAvailable === true ? '✅ Nome de usuário disponível' : 
+                     'Verificando disponibilidade...'}
+                  </p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Crie uma senha segura"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border-primary/20 focus:border-primary pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            // Login Form
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="emailOrUsername">Usuário ou email</Label>
+                <Input
+                  id="emailOrUsername"
+                  placeholder="Digite seu usuário ou email"
+                  value={emailOrUsername}
+                  onChange={(e) => setEmailOrUsername(e.target.value)}
+                  className="border-primary/20 focus:border-primary"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="loginPassword">Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="loginPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Digite sua senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border-primary/20 focus:border-primary pr-10"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
           
           <Button 
-            onClick={handleSignUp} 
+            onClick={isLogin ? handleSignIn : handleSignUp} 
             className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80 text-primary-foreground font-semibold py-3 transition-all duration-300 transform hover:scale-105"
-            disabled={!name.trim() || !email.trim() || password.length < 6}
+            disabled={isLogin ? 
+              (!emailOrUsername.trim() || password.length < 6) : 
+              (!name.trim() || !email.trim() || !username.trim() || password.length < 6 || usernameAvailable === false)
+            }
           >
             <Zap className="w-4 h-4 mr-2" />
-            Criar Conta
+            {isLogin ? 'Entrar' : 'Criar Conta'}
           </Button>
 
           <div className="flex items-center gap-4 my-4">
@@ -222,10 +372,21 @@ const Signup = () => {
               type="button"
               variant="link"
               className="text-sm text-primary hover:underline"
-              onClick={goToLogin}
+              onClick={toggleMode}
             >
-              Já tem uma conta? Faça login
+              {isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem uma conta? Faça login'}
             </Button>
+            
+            {isLogin && (
+              <Button
+                type="button"
+                variant="link"
+                className="text-sm text-muted-foreground hover:underline block mx-auto mt-2"
+                onClick={() => setShowForgotPassword(true)}
+              >
+                Esqueceu a senha?
+              </Button>
+            )}
           </div>
           
           <ForgotPasswordModal

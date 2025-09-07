@@ -224,6 +224,7 @@ export type Database = {
         Row: {
           created_at: string | null
           credits: number | null
+          email: string
           id: string
           name: string
           points: number | null
@@ -232,10 +233,12 @@ export type Database = {
           tutorial_views: number
           updated_at: string | null
           user_id: string
+          username: string | null
         }
         Insert: {
           created_at?: string | null
           credits?: number | null
+          email: string
           id?: string
           name: string
           points?: number | null
@@ -244,10 +247,12 @@ export type Database = {
           tutorial_views?: number
           updated_at?: string | null
           user_id: string
+          username?: string | null
         }
         Update: {
           created_at?: string | null
           credits?: number | null
+          email?: string
           id?: string
           name?: string
           points?: number | null
@@ -256,6 +261,7 @@ export type Database = {
           tutorial_views?: number
           updated_at?: string | null
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -538,6 +544,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_username_available: {
+        Args: { username_input: string }
+        Returns: boolean
+      }
       claim_free_credits_secure: {
         Args: {
           p_device_fingerprint: string
@@ -600,6 +610,10 @@ export type Database = {
           p_target_table: string
         }
         Returns: undefined
+      }
+      lookup_login_identity: {
+        Args: { identifier: string }
+        Returns: Json
       }
       mark_free_credits_claimed: {
         Args: { p_device_fingerprint: string; p_user_id: string }

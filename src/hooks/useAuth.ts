@@ -77,7 +77,7 @@ export const useAuth = () => {
     checkAdmin();
   }, [user]);
 
-  const signUp = async (email: string, password: string, name: string, referralCode?: string) => {
+  const signUp = async (email: string, password: string, name: string, username?: string, referralCode?: string) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
@@ -96,6 +96,11 @@ export const useAuth = () => {
         name,
         claimed_free_credits: canClaimFreeCredits ? 'false' : 'true'
       };
+
+      // Add username to user metadata if provided
+      if (username) {
+        userData.username = username;
+      }
 
       // Add referral code to user metadata if provided (using 'ref' key)
       if (referralCode) {
@@ -161,7 +166,7 @@ export const useAuth = () => {
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (emailOrUsername: string, password: string) => {
     try {
       cleanupAuthState();
       
@@ -172,8 +177,18 @@ export const useAuth = () => {
         // Continue even if this fails
       }
 
+      // Lookup user identity to get email if username was provided
+      const { data: lookupData, error: lookupError } = await supabase.rpc('lookup_login_identity', {
+        identifier: emailOrUsername
+      });
+
+      if (lookupError) throw lookupError;
+
+      const lookupResult = lookupData as { exists: boolean; email: string | null } | null;
+      const emailToUse = lookupResult?.exists ? lookupResult.email || emailOrUsername : emailOrUsername;
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: emailToUse,
         password,
       });
 
@@ -181,7 +196,7 @@ export const useAuth = () => {
 
       toast({
         title: "🎮 Login realizado!",
-        description: email === 'admin@imperium.com' ? "Bem-vindo, Admin!" : "Bem-vindo ao SpritePay!",
+        description: emailToUse === 'admin@imperium.com' ? "Bem-vindo, Admin!" : "Bem-vindo ao SpritePay!",
       });
 
       return { data, error: null };
@@ -189,7 +204,7 @@ export const useAuth = () => {
       let errorMessage = "Erro no login";
       
       if (error.message.includes('Invalid login credentials')) {
-        errorMessage = "Email ou senha incorretos";
+        errorMessage = "Usuário/email ou senha incorretos";
       } else if (error.message.includes('Email not confirmed')) {
         errorMessage = "Confirme seu email antes de fazer login";
       }
@@ -200,6 +215,20 @@ export const useAuth = () => {
         variant: "destructive"
       });
       return { data: null, error };
+    }
+  };
+
+  const checkUsernameAvailable = async (username: string) => {
+    try {
+      const { data, error } = await supabase.rpc('check_username_available', {
+        username_input: username
+      });
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error checking username availability:', error);
+      return false;
     }
   };
 
@@ -313,6 +342,7 @@ export const useAuth = () => {
     resetPassword,
     updatePassword,
     signInWithGoogle,
+    checkUsernameAvailable,
     canClaimFreeCredits
   };
 };
