@@ -1,0 +1,31 @@
+{
+  "name": "SpritePay",
+  "short_name": "SpritePay",
+  "description": "Marketplace de jogadores com sprites cyberpunk e sistema de monetização",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "/spritepay-logo-16x16.png?v=5",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/spritepay-logo-32x32.png?v=5",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/spritepay-logo.png?v=5",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/spritepay-logo-192x192.png?v=5",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
